@@ -1,0 +1,71 @@
+Project Requirements Document: Cursor Web App
+
+1. Project Overview
+Goal: Build a web application that simulates a 3D drone hovering over a platform under the influence of wind. The drone will be controlled using various control algorithms (starting with PID) to stabilize against disturbances.
+
+2. Core Features
+2.1. 3D Simulation Environment
+- Render a 3D drone and platform using WebGL (e.g., Three.js).
+- Simulate the drone’s position and orientation in 3D space.
+- Visualize wind direction and magnitude using arrows or particles.
+
+2.2. Physics and Dynamics
+- Implement simplified drone dynamics (6-DOF or reduced order as needed).
+- Model wind as external force/torque with adjustable vx, vy, vz components.
+- Apply basic physics engine or custom integration loop (e.g., Euler or RK4).
+
+2.3. Control System
+- Implement PID controller for position and orientation control.
+- Interface to tune Kp, Ki, Kd values in real-time.
+- Apply controller outputs as motor thrust or body torques.
+
+2.4. User Interface
+- Input fields/sliders for PID gains and wind components.
+- Play/Pause simulation and reset state.
+- Display of drone state (position, orientation, velocity, error).
+
+2.5. Animation
+- Smooth animation of drone dynamics at ~60 fps.
+- Visual feedback when control reacts to wind disturbances.
+
+3. Technical Requirements
+3.1. Frontend Framework
+- Tech stack: HTML5, CSS3, JavaScript
+- 3D Library: Three.js for rendering
+- UI Framework: Optional (e.g., React or plain JS for simplicity)
+
+3.2. Simulation Loop
+- Time-stepped simulation with adjustable timestep
+- Real-time physics update + rendering
+
+3.3. Control Integration
+- PID algorithm runs on each frame or at defined control rate
+- Modular structure for future LQR/MPC integration
+
+3.4. AI Agent Collaboration
+- Use structured prompts like:
+  - "Implement a PID controller in JS for position control of a quadcopter."
+  - "Write a function that adds wind force to a drone’s velocity vector."
+  - "Set up a Three.js scene with a floating cube representing a drone."
+- Break tasks into single-purpose modules to let AI iterate on one component at a time (e.g., “updatePhysics.js”, “pidController.js”).
+
+4. Milestones
+| Milestone                  | Description                                            | Target Date |
+|---------------------------|--------------------------------------------------------|-------------|
+| M1: 3D environment setup  | Basic drone + platform in Three.js                     | Week 1      |
+| M2: Physics + wind model  | Add simple dynamics, wind force modeling               | Week 2      |
+| M3: PID controller        | Apply PID control to maintain position                 | Week 3      |
+| M4: UI & controls         | Add sliders/inputs for wind and PID gains              | Week 4      |
+| M5: Animation & polish    | Smooth transitions, visualizations, performance tuning | Week 5      |
+
+5. AI Collaboration Strategy
+- Define micro-tasks (e.g., “Compute net thrust from PID output”).
+- Use function stubs and comments to guide code generation.
+- Test incrementally after each AI-generated component.
+- Document parameters and system states clearly for each module.
+
+6. Future Expansion (after MVP)
+- Add toggleable control types (LQR, MPC).
+- Add drone path following or goal tracking.
+- Introduce obstacles and terrain interaction.
+- Save/load simulation states.
