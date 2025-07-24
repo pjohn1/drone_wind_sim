@@ -5,9 +5,9 @@ Goal: Build a web application that simulates a 3D drone hovering over a platform
 
 2. Core Features
 2.1. 3D Simulation Environment
-- Render a 3D drone and platform using WebGL (e.g., Three.js).
-- Simulate the drone’s position and orientation in 3D space.
-- Visualize wind direction and magnitude using arrows or particles.
+- ~~Render a 3D drone and platform using WebGL (e.g., Three.js).~~
+- ~~Simulate the drone’s position and orientation in 3D space.~~
+- ~~Visualize wind direction and magnitude using arrows or particles.
 
 2.2. Physics and Dynamics
 - Implement simplified drone dynamics (6-DOF or reduced order as needed).
