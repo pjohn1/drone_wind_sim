@@ -5,6 +5,7 @@ import { MOUSE } from 'three';
 import { simulateDronePhysics } from './physics_sim.js';
 import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
 import { ColladaLoader } from 'three/examples/jsm/loaders/ColladaLoader.js';
+import { calcForces } from './forces_calc.js';
 
 // Set up scene, camera, and renderer
 
@@ -237,6 +238,11 @@ function animate(time) {
       windY: wind.y,
       windZ: wind.z
     };
+
+    // Get force matrix from calcForces
+    const forceMatrix = calcForces(droneState, inputs, time);
+    inputs.forceMatrix = forceMatrix;
+
     const deltas = simulateDronePhysics(droneState, inputs, dt);
 
     // Integrate state
@@ -246,7 +252,14 @@ function animate(time) {
     droneState.x += droneState.vx * dt;
     droneState.y += droneState.vy * dt;
     droneState.z += droneState.vz * dt;
-    // (roll, pitch, yaw, wx, wy, wz can be added later)
+    
+    // Integrate angular velocities and orientations
+    droneState.wx += deltas.dwx;
+    droneState.wy += deltas.dwy;
+    droneState.wz += deltas.dwz;
+    droneState.roll += droneState.wx * dt;
+    droneState.pitch += droneState.wy * dt;
+    droneState.yaw += droneState.wz * dt;
 
     // Prevent drone from falling through the platform (y=0.15 is top of platform)
     if (droneState.y < 0.15) {
@@ -255,6 +268,8 @@ function animate(time) {
     }
     if (drone) {
       drone.position.set(droneState.x, droneState.y, droneState.z);
+      // Apply orientation to drone model
+      drone.rotation.set(droneState.roll, droneState.yaw, droneState.pitch);
     }
   }
 
