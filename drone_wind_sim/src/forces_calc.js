@@ -98,7 +98,7 @@ export function calcForces(state, inputs, t) {
         f.push([f_x,f_y,f_z]);
     }
 
-    // console.log(f);
+    console.log("Forces before: ", f);
     return f;
 
     

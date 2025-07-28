@@ -6,6 +6,7 @@ import { simulateDronePhysics } from './physics_sim.js';
 import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
 import { ColladaLoader } from 'three/examples/jsm/loaders/ColladaLoader.js';
 import { calcForces } from './forces_calc.js';
+import { getCompMatrix } from './pid_compensator.js'
 
 // Set up scene, camera, and renderer
 
@@ -240,8 +241,34 @@ function animate(time) {
       windZ: wind.z
     };
 
+    const kvals = {
+      kp: 0.1,
+      kd: 0.01,
+      ki: 0.01
+    }
+
     // Get force matrix from calcForces
-    const forceMatrix = calcForces(droneState, inputs, time);
+    // let forceMatrix = calcForces(droneState, inputs, time);
+    let forceMatrix = [
+      [0,0.1,0],
+      [0,0.1,0],
+      [0,0,0],
+      [0,0,0],
+      [0,0,0]
+    ];
+    // console.log("Force Matrix Before: ", JSON.parse(JSON.stringify(forceMatrix))); // Deep copy for logging
+    
+    let compensatorMatrix = getCompMatrix(droneState, kvals, dt);
+    compensatorMatrix = [0,0,0,0];
+    // console.log("Compensator Matrix: ", compensatorMatrix);
+    
+    for (let i = 0; i < compensatorMatrix.length; i++) {
+      // console.log(`Adding ${compensatorMatrix[i]} to forceMatrix[${i}][1] (was ${forceMatrix[i][1]})`);
+      forceMatrix[i][1] += compensatorMatrix[i];
+      // console.log(`forceMatrix[${i}][1] is now ${forceMatrix[i][1]}`);
+    }
+    
+    // console.log("Force Matrix After: ", JSON.parse(JSON.stringify(forceMatrix))); // Deep copy for logging
     inputs.forceMatrix = forceMatrix;
 
     const deltas = simulateDronePhysics(droneState, inputs, dt);
@@ -259,8 +286,8 @@ function animate(time) {
     droneState.wy += deltas.dwy;
     droneState.wz += deltas.dwz;
     droneState.roll += droneState.wx * dt;
-    droneState.pitch += droneState.wy * dt;
-    droneState.yaw += droneState.wz * dt;
+    droneState.pitch += droneState.wz * dt;
+    droneState.yaw += droneState.wy * dt;
 
     // Prevent drone from falling through the platform (y=0.15 is top of platform)
     if (droneState.y < 0.15) {
