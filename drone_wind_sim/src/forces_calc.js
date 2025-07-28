@@ -30,6 +30,7 @@ const Ay = Math.PI*rotor_radius**2;
 const Aside = Math.PI*rotor_radius*rotor_height;
 
 export function calcForces(state, inputs, t) {
+    // console.log(t);
     const { x, y, z, vx, vy, vz, roll, pitch, yaw, wx, wy, wz } = state;
     const { windX, windY, windZ } = inputs;
 
@@ -42,18 +43,48 @@ export function calcForces(state, inputs, t) {
         [d_vert, 0,-d_vert],
         [d_vert, 0,d_vert],
         [-d_vert,0,d_vert],
-        [-d_vert,-d_vert,0],
+        [-d_vert,0,-d_vert],
         [0,0,0]
     ]; //f1,f2,f3,f4,fb
 
-    const rotorGusts = rotorPositions.map(pos => {
-        const gustVec = gust.evaluate(pos,t);
-        return [
-            gustVec[0] + globalWind[0],
-            gustVec[1] + globalWind[1],
-            gustVec[2] + globalWind[2]
-        ];
-    });
+    let rotorGusts = [];
+    for (let i=0;i<rotorPositions.length;i++)
+    {
+        const gustVec = gust.evaluate(rotorPositions[i],t,globalWind);
+        let gustArr;
+        if (i==0 || i==1)
+        {
+            gustArr = [
+                gustVec[0] + globalWind[0],
+                gustVec[1] + globalWind[1],
+                gustVec[2] + globalWind[2]
+            ];
+        }
+        else {
+            gustArr = [
+                0*gustVec[0] + globalWind[0],
+                0*gustVec[1] + globalWind[1],
+                0*gustVec[2] + globalWind[2]
+            ];
+        }
+
+        rotorGusts.push(gustArr);
+    }
+    console.log(rotorGusts);
+    // const rotorGusts = rotorPositions.map(pos => {
+    //     const gustVec = gust.evaluate(pos,t);
+        
+    //     return [
+    //         gustVec[0] + globalWind[0],
+    //         gustVec[1] + globalWind[1],
+    //         gustVec[2] + globalWind[2]
+    //     ];
+    //     // return [
+    //     //     globalWind[0],
+    //     //     globalWind[1],
+    //     //     globalWind[2]
+    //     // ]
+    // });
 
     let f = [];
 
@@ -67,7 +98,7 @@ export function calcForces(state, inputs, t) {
         f.push([f_x,f_y,f_z]);
     }
 
-    console.log(f);
+    // console.log(f);
     return f;
 
     

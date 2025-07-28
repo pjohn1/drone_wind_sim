@@ -60,7 +60,7 @@ export function simulateDronePhysics(state, inputs, dt) {
 
   // Linear acceleration (F = ma)
   const ax = netFx / mass;
-  const ay = netFy / mass - gravity;
+  const ay = netFy / mass; //- gravity;
   const az = netFz / mass;
 
   // Angular acceleration (τ = Iα)

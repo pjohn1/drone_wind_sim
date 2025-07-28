@@ -52,7 +52,7 @@ loader.load('src/hummingbird.dae', (collada) => {
   });
   // Initial position, rotation, and scale
   drone.position.set(initialDroneState.x, initialDroneState.y, initialDroneState.z);
-  drone.rotation.x = -Math.PI / 2; // 90 degrees around x axis
+  drone.rotation.x = 0.0;
   drone.scale.set(2, 2, 2); // Scale 1
   scene.add(drone);
 });
@@ -105,7 +105,7 @@ let lastTime = null;
 let isPlaying = false;
 
 // Wind vector (constant for now)
-const wind = { x: 1, y: 1, z: 1 };
+const wind = { x: 0.1, y: 0.1, z: 0.1 };
 const mass = 1;
 
 // Axis indicator setup (now at the origin in the main scene)
@@ -185,6 +185,7 @@ function resetSimulation() {
   isPlaying = false;
   droneState = { ...initialDroneState };
   drone.position.set(droneState.x, droneState.y, droneState.z);
+  drone.rotation.set(0.0,0.0,0.0);
   setButtonToPlay();
 }
 setButtonToPlay();
@@ -266,6 +267,7 @@ function animate(time) {
       droneState.y = 0.15;
       droneState.vy = 0;
     }
+    console.log(drone.rotation);
     if (drone) {
       drone.position.set(droneState.x, droneState.y, droneState.z);
       // Apply orientation to drone model
@@ -321,15 +323,15 @@ windPanel.innerHTML = `
   <h2>Wind Control</h2>
   <div class="wind-input-group">
     <label for="wind-x-num">Wind X</label>
-    <input type="number" id="wind-x-num" min="-10" max="10" step="0.1" value="1">
+    <input type="number" id="wind-x-num" min="-10" max="10" step="0.1" value="0.1">
   </div>
   <div class="wind-input-group">
     <label for="wind-y-num">Wind Y</label>
-    <input type="number" id="wind-y-num" min="-10" max="10" step="0.1" value="1">
+    <input type="number" id="wind-y-num" min="-10" max="10" step="0.1" value="0.1">
   </div>
   <div class="wind-input-group">
     <label for="wind-z-num">Wind Z</label>
-    <input type="number" id="wind-z-num" min="-10" max="10" step="0.1" value="1">
+    <input type="number" id="wind-z-num" min="-10" max="10" step="0.1" value="0.1">
   </div>
 `;
 document.body.appendChild(windPanel);

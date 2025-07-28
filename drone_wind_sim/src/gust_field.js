@@ -24,14 +24,14 @@ class GustField {
     }
   
     // Evaluate gust vector at position [x, y, z] and time t
-    evaluate(r, t) {
+    evaluate(r, t,amp) {
       let v = [0, 0, 0];
       for (let i = 0; i < this.numWaves; i++) {
         let kDotR = this.ks[i][0] * r[0] + this.ks[i][1] * r[1] + this.ks[i][2] * r[2];
         let phase = 2 * Math.PI * this.freqs[i] * t + kDotR + this.phases[i];
-        v[0] += this.amps[i][0] * Math.sin(phase);
-        v[1] += this.amps[i][1] * Math.sin(phase);
-        v[2] += this.amps[i][2] * Math.sin(phase);
+        v[0] += amp[0] * Math.sin(phase);
+        v[1] += amp[1] * Math.sin(phase);
+        v[2] += amp[2] * Math.sin(phase);
       }
       return v;
     }
