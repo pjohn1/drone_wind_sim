@@ -19,11 +19,23 @@ const Izz = 0.0040;
 const d = 0.215; // m, distance between CG and rotor
 const gravity = 9.8; // m/s^2 (downwards)
 
+function wrapToPi(angle) {
+  return ((angle + Math.PI) % (2 * Math.PI)) - Math.PI;
+}
+
+
 export function getCompMatrix(state, inputs, dt) {
   // Unpack state
   const { roll, pitch, yaw, wx, wy, wz } = state;
   const { kp, ki, kd} = inputs;
-  const error = [state.roll,state.yaw,state.pitch,state.wx,state.wy,state.wz];
+  const e = [state.roll,state.yaw,state.pitch,state.wx,state.wy,state.wz];
+  console.log('e before: ', e);
+  const error = e.map(ang =>
+    {
+      return wrapToPi(ang);
+    } );
+  
+  console.log('e after: ',error);
 
   const forces = [0.0,0.0,0.0,0.0]
   // pitch control
@@ -40,14 +52,14 @@ export function getCompMatrix(state, inputs, dt) {
 //   forces[2] += P_yaw / 4;
 //   forces[3] -= P_yaw / 4;
 
-//   // roll control
-//   const P_roll = inputs.kp * error[0];
-//   forces[0] -= P_roll / 4;
-//   forces[1] += P_roll / 4;
-//   forces[2] += P_roll / 4;
-//   forces[3] -= P_roll / 4;
+  // roll control
+  const P_roll = inputs.kp * -error[0];
+  forces[0] += P_roll / 4;
+  forces[1] -= P_roll / 4;
+  forces[2] -= P_roll / 4;
+  forces[3] += P_roll / 4;
 
-  console.log("PID forces: ", forces);
+  // console.log("PID forces: ", forces);
 
 
   return forces;

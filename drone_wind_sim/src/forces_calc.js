@@ -70,7 +70,7 @@ export function calcForces(state, inputs, t) {
 
         rotorGusts.push(gustArr);
     }
-    console.log(rotorGusts);
+    // console.log(rotorGusts);
     // const rotorGusts = rotorPositions.map(pos => {
     //     const gustVec = gust.evaluate(pos,t);
         
@@ -98,7 +98,7 @@ export function calcForces(state, inputs, t) {
         f.push([f_x,f_y,f_z]);
     }
 
-    console.log("Forces before: ", f);
+    // console.log("Forces before: ", f);
     return f;
 
     

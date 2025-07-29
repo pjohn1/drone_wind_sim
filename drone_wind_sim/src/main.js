@@ -268,15 +268,15 @@ function animate(time) {
     
     let compensatorMatrix = getCompMatrix(droneState, kvals, dt);
     // compensatorMatrix = [0,0,0,0];
-    console.log("Compensator Matrix: ", compensatorMatrix);
+    // console.log("Compensator Matrix: ", compensatorMatrix);
     const R = getR(droneState.roll,droneState.pitch,droneState.yaw);
-    console.log(R);
+    // console.log(R);
     for (let i = 0; i < compensatorMatrix.length; i++) {
       // convert upward comp (body) force to inertial frame force
       const propForceBody = new THREE.Vector3(0,compensatorMatrix[i],0);
       const inertialPropForce = propForceBody.clone().applyMatrix3(R);
 
-      console.log(inertialPropForce);
+      // console.log(inertialPropForce);
       
 
       forceMatrix[i][0] += inertialPropForce.x;
@@ -285,7 +285,7 @@ function animate(time) {
       // console.log(`forceMatrix[${i}][1] is now ${forceMatrix[i][1]}`);
     }
     
-    console.log("Force Matrix After: ", JSON.parse(JSON.stringify(forceMatrix))); // Deep copy for logging
+    // console.log("Force Matrix After: ", JSON.parse(JSON.stringify(forceMatrix))); // Deep copy for logging
     inputs.forceMatrix = forceMatrix;
 
     const deltas = simulateDronePhysics(droneState, inputs, dt);
@@ -311,7 +311,7 @@ function animate(time) {
       droneState.y = 0.15;
       droneState.vy = 0;
     }
-    console.log(drone.rotation);
+    // console.log(drone.rotation);
     if (drone) {
       drone.position.set(droneState.x, droneState.y, droneState.z);
       // Apply orientation to drone model

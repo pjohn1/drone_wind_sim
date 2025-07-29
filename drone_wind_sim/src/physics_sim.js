@@ -65,7 +65,7 @@ export function simulateDronePhysics(state, inputs, dt) {
   const ay = netFy / mass; //- gravity;
   const az = netFz / mass;
 
-  console.log("Torques: ",netTx,netTy,netTz);
+  // console.log("Torques: ",netTx,netTy,netTz);
   // Angular acceleration (τ = Iα)
   const alphaX = netTx / Ixx;
   const alphaY = netTy / Iyy;
@@ -77,7 +77,7 @@ export function simulateDronePhysics(state, inputs, dt) {
   const dvz = az * dt;
 
   // Integrate angular velocities
-  const dwx = 0;//alphaX * dt;
+  const dwx = alphaX * dt;
   const dwy = 0;//alphaY * dt;
   const dwz = alphaZ * dt;
 

@@ -7,7 +7,7 @@ export function getR(roll, pitch, yaw)
     const c_theta = cos(pitch); const s_theta = sin(pitch);
     const c_psi = cos(yaw); const s_psi = sin(yaw);
 
-    console.log(c_phi,s_phi,c_theta,s_theta,c_psi,s_psi);
+    // console.log(c_phi,s_phi,c_theta,s_theta,c_psi,s_psi);
 
     const Ry = new THREE.Matrix3();
     const Rz = new THREE.Matrix3();
