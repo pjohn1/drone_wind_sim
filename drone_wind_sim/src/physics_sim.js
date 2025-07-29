@@ -58,7 +58,9 @@ export function simulateDronePhysics(state, inputs, dt) {
     }
   }
 
-  // Linear acceleration (F = ma)
+
+
+  // Linear acceleration (F = ma) in inertial frame
   const ax = netFx / mass;
   const ay = netFy / mass; //- gravity;
   const az = netFz / mass;
@@ -75,12 +77,14 @@ export function simulateDronePhysics(state, inputs, dt) {
   const dvz = az * dt;
 
   // Integrate angular velocities
-  const dwx = alphaX * dt;
-  const dwy = alphaY * dt;
+  const dwx = 0;//alphaX * dt;
+  const dwy = 0;//alphaY * dt;
   const dwz = alphaZ * dt;
 
   return {
     dvx, dvy, dvz,
     dwx, dwy, dwz
   };
+
+
 } 

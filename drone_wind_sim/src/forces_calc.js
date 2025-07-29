@@ -91,9 +91,9 @@ export function calcForces(state, inputs, t) {
     for (let i=0;i<5;i++)
     {
         const gustVec = rotorGusts[i];
-        const f_x = (gustVec[0]/Math.abs(gustVec[0])) * Cd*rho*Aside*gustVec[0]**2;
-        const f_y = (gustVec[1]/Math.abs(gustVec[1])) * Cd*rho*Ay*gustVec[1]**2;
-        const f_z = (gustVec[2]/Math.abs(gustVec[2])) * Cd*rho*Aside*gustVec[2]**2;
+        const f_x = gustVec[0] !== 0 ? (gustVec[0]/Math.abs(gustVec[0])) * Cd*rho*Aside*gustVec[0]**2 : 0;
+        const f_y = gustVec[1] !== 0 ? (gustVec[1]/Math.abs(gustVec[1])) * Cd*rho*Ay*gustVec[1]**2 : 0;
+        const f_z = gustVec[2] !== 0 ? (gustVec[2]/Math.abs(gustVec[2])) * Cd*rho*Aside*gustVec[2]**2 : 0;
         
         f.push([f_x,f_y,f_z]);
     }

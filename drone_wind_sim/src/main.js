@@ -7,6 +7,7 @@ import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRe
 import { ColladaLoader } from 'three/examples/jsm/loaders/ColladaLoader.js';
 import { calcForces } from './forces_calc.js';
 import { getCompMatrix } from './pid_compensator.js'
+import { getR } from './rotation_matrix.js'
 
 // Set up scene, camera, and renderer
 
@@ -193,7 +194,7 @@ setButtonToPlay();
 
 // Telemetry update function
 function updateTelemetry() {
-  const { x, y, z, vx, vy, vz } = droneState;
+  const { x, y, z, vx, vy, vz, roll, pitch, yaw, wx, wy, wz } = droneState;
   document.getElementById('telemetry').innerHTML =
     `<b>Drone Telemetry</b><br>` +
     `x: ${x.toFixed(2)}<br>` +
@@ -201,8 +202,15 @@ function updateTelemetry() {
     `z: ${z.toFixed(2)}<br>` +
     `vx: ${vx.toFixed(2)}<br>` +
     `vy: ${vy.toFixed(2)}<br>` +
-    `vz: ${vz.toFixed(2)}`;
+    `vz: ${vz.toFixed(2)}<br>` +
+    `roll: ${roll.toFixed(2)}<br>` +
+    `pitch: ${pitch.toFixed(2)}<br>` +
+    `yaw: ${yaw.toFixed(2)}<br>` +
+    `wx: ${wx.toFixed(2)}<br>` +
+    `wy: ${wy.toFixed(2)}<br>` +
+    `wz: ${wz.toFixed(2)}`;
 }
+
 
 // Wind stripes setup
 const windStripes = [];
@@ -242,33 +250,42 @@ function animate(time) {
     };
 
     const kvals = {
-      kp: 0.1,
+      kp: 1.0,
       kd: 0.01,
       ki: 0.01
     }
 
     // Get force matrix from calcForces
-    // let forceMatrix = calcForces(droneState, inputs, time);
-    let forceMatrix = [
-      [0,0.1,0],
-      [0,0.1,0],
-      [0,0,0],
-      [0,0,0],
-      [0,0,0]
-    ];
+    let forceMatrix = calcForces(droneState, inputs, time);
+    // let forceMatrix = [
+    //   [0,0.1,0],
+    //   [0,0.1,0],
+    //   [0,0,0],
+    //   [0,0,0],
+    //   [0,0,0]
+    // ];
     // console.log("Force Matrix Before: ", JSON.parse(JSON.stringify(forceMatrix))); // Deep copy for logging
     
     let compensatorMatrix = getCompMatrix(droneState, kvals, dt);
-    compensatorMatrix = [0,0,0,0];
-    // console.log("Compensator Matrix: ", compensatorMatrix);
-    
+    // compensatorMatrix = [0,0,0,0];
+    console.log("Compensator Matrix: ", compensatorMatrix);
+    const R = getR(droneState.roll,droneState.pitch,droneState.yaw);
+    console.log(R);
     for (let i = 0; i < compensatorMatrix.length; i++) {
-      // console.log(`Adding ${compensatorMatrix[i]} to forceMatrix[${i}][1] (was ${forceMatrix[i][1]})`);
-      forceMatrix[i][1] += compensatorMatrix[i];
+      // convert upward comp (body) force to inertial frame force
+      // const propForceBody = new THREE.Vector3(0,compensatorMatrix[i],0);
+      // const inertialPropForce = propForceBody.clone().applyMatrix3(R);
+
+      console.log(inertialPropForce);
+      
+
+      forceMatrix[i][0] += inertialPropForce.x;
+      forceMatrix[i][1] += inertialPropForce.y;
+      forceMatrix[i][2] += inertialPropForce.z;
       // console.log(`forceMatrix[${i}][1] is now ${forceMatrix[i][1]}`);
     }
     
-    // console.log("Force Matrix After: ", JSON.parse(JSON.stringify(forceMatrix))); // Deep copy for logging
+    console.log("Force Matrix After: ", JSON.parse(JSON.stringify(forceMatrix))); // Deep copy for logging
     inputs.forceMatrix = forceMatrix;
 
     const deltas = simulateDronePhysics(droneState, inputs, dt);

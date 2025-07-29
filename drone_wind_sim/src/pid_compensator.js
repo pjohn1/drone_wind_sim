@@ -27,27 +27,29 @@ export function getCompMatrix(state, inputs, dt) {
 
   const forces = [0.0,0.0,0.0,0.0]
   // pitch control
-  const P_pitch = inputs.kp * -error[0];
+  const P_pitch = inputs.kp * -error[2];
   forces[0] += P_pitch / 4;
   forces[1] += P_pitch / 4;
   forces[2] -= P_pitch / 4;
   forces[3] -= P_pitch / 4;
 
   // yaw control
-  const P_yaw = inputs.kp * -error[1];
-  forces[0] += P_yaw / 4;
-  forces[1] -= P_yaw / 4;
-  forces[2] += P_yaw / 4;
-  forces[3] -= P_yaw / 4;
+//   const P_yaw = inputs.kp * error[1];
+//   forces[0] += P_yaw / 4;
+//   forces[1] -= P_yaw / 4;
+//   forces[2] += P_yaw / 4;
+//   forces[3] -= P_yaw / 4;
 
-  // roll control
-  const P_roll = inputs.kp * -error[2];
-  forces[0] -= P_roll / 4;
-  forces[1] += P_roll / 4;
-  forces[2] += P_roll / 4;
-  forces[3] -= P_roll / 4;
+//   // roll control
+//   const P_roll = inputs.kp * error[0];
+//   forces[0] -= P_roll / 4;
+//   forces[1] += P_roll / 4;
+//   forces[2] += P_roll / 4;
+//   forces[3] -= P_roll / 4;
 
   console.log("PID forces: ", forces);
+
+
   return forces;
 
 } 
