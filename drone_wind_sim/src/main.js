@@ -273,8 +273,8 @@ function animate(time) {
     console.log(R);
     for (let i = 0; i < compensatorMatrix.length; i++) {
       // convert upward comp (body) force to inertial frame force
-      // const propForceBody = new THREE.Vector3(0,compensatorMatrix[i],0);
-      // const inertialPropForce = propForceBody.clone().applyMatrix3(R);
+      const propForceBody = new THREE.Vector3(0,compensatorMatrix[i],0);
+      const inertialPropForce = propForceBody.clone().applyMatrix3(R);
 
       console.log(inertialPropForce);
       
