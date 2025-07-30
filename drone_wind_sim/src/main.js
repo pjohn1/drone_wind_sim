@@ -249,12 +249,6 @@ function animate(time) {
       windZ: wind.z
     };
 
-    const kvals = {
-      kp: 1.0,
-      kd: 0.01,
-      ki: 0.01
-    }
-
     // Get force matrix from calcForces
     let forceMatrix = calcForces(droneState, inputs, time);
     // let forceMatrix = [
@@ -410,3 +404,91 @@ function bindWindInput(axis) {
 bindWindInput('x');
 bindWindInput('y');
 bindWindInput('z'); 
+
+// PID gains
+let kp = 1.0, ki = 0.1, kd = 0.5;
+const kvals = { kp, ki, kd };
+
+// Control panel UI
+const controlPanel = document.createElement('div');
+controlPanel.id = 'control-panel';
+controlPanel.innerHTML = `
+  <h2>Control Panel</h2>
+  <div class="tab-container">
+    <div class="tab-buttons">
+      <button class="tab-button active" data-tab="pid">PID</button>
+      <button class="tab-button" data-tab="other">Other</button>
+    </div>
+    <div class="tab-content active" id="pid-tab">
+      <div class="pid-input-group">
+        <label for="kp-input">Kp</label>
+        <input type="number" id="kp-input" min="0" max="10" step="0.1" value="${kp}">
+      </div>
+      <div class="pid-input-group">
+        <label for="ki-input">Ki</label>
+        <input type="number" id="ki-input" min="0" max="10" step="0.1" value="${ki}">
+      </div>
+      <div class="pid-input-group">
+        <label for="kd-input">Kd</label>
+        <input type="number" id="kd-input" min="0" max="10" step="0.1" value="${kd}">
+      </div>
+    </div>
+    <div class="tab-content" id="other-tab">
+      <p>Other controls coming soon...</p>
+    </div>
+  </div>
+`;
+document.body.appendChild(controlPanel);
+
+// Control panel open/close logic
+let controlPanelOpen = false;
+function openControlPanel() {
+  controlPanel.classList.add('open');
+  controlPanelOpen = true;
+}
+function closeControlPanel() {
+  controlPanel.classList.remove('open');
+  controlPanelOpen = false;
+}
+// Open when mouse is near right edge
+window.addEventListener('mousemove', (e) => {
+  if (!controlPanelOpen && e.clientX > window.innerWidth - 30) openControlPanel();
+  // Close if mouse moves away from right edge and not over the panel
+  if (controlPanelOpen && e.clientX < window.innerWidth - 320 && !controlPanel.matches(':hover')) closeControlPanel();
+});
+// Close when mouse leaves the panel
+controlPanel.addEventListener('mouseleave', () => {
+  closeControlPanel();
+});
+
+// Tab switching logic
+const tabButtons = controlPanel.querySelectorAll('.tab-button');
+const tabContents = controlPanel.querySelectorAll('.tab-content');
+tabButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    const tabName = button.dataset.tab;
+    // Remove active class from all buttons and contents
+    tabButtons.forEach(btn => btn.classList.remove('active'));
+    tabContents.forEach(content => content.classList.remove('active'));
+    // Add active class to clicked button and corresponding content
+    button.classList.add('active');
+    document.getElementById(`${tabName}-tab`).classList.add('active');
+  });
+});
+
+// PID input logic
+function bindPIDInput(gain) {
+  const input = document.getElementById(`${gain}-input`);
+  input.addEventListener('input', () => {
+    const newValue = parseFloat(input.value);
+    kvals[gain] = newValue;
+    // Also update the individual variables for consistency
+    if (gain === 'kp') kp = newValue;
+    if (gain === 'ki') ki = newValue;
+    if (gain === 'kd') kd = newValue;
+    console.log(`Updated ${gain} to ${newValue}, kvals:`, kvals);
+  });
+}
+bindPIDInput('kp');
+bindPIDInput('ki');
+bindPIDInput('kd'); 

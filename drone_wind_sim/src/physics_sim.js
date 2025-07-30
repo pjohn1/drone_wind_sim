@@ -78,7 +78,7 @@ export function simulateDronePhysics(state, inputs, dt) {
 
   // Integrate angular velocities
   const dwx = alphaX * dt;
-  const dwy = 0;//alphaY * dt;
+  const dwy = alphaY * dt;
   const dwz = alphaZ * dt;
 
   return {

@@ -102,4 +102,92 @@ body, html {
 }
 .wind-input-group input[type="number"]:focus {
   border: 1.5px solid #00aaff;
+}
+#control-panel {
+  position: absolute;
+  top: 20px;
+  right: -320px;
+  width: 320px;
+  background: rgba(34, 34, 34, 0.97);
+  color: #fff;
+  box-shadow: -2px 0 12px rgba(0,0,0,0.2);
+  transition: right 0.3s cubic-bezier(0.4,0,0.2,1);
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  font-family: inherit;
+  padding: 32px 20px 20px 20px;
+  height: auto;
+}
+#control-panel.open {
+  right: 0;
+}
+#control-panel h2 {
+  margin: 0 0 32px 0;
+  font-size: 1.3em;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-align: center;
+}
+.tab-container {
+  width: 100%;
+  margin-bottom: 20px;
+}
+.tab-buttons {
+  display: flex;
+  margin-bottom: 20px;
+}
+.tab-button {
+  flex: 1;
+  padding: 10px;
+  background: #444;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.tab-button.active {
+  background: #00aaff;
+}
+.tab-button:hover {
+  background: #555;
+}
+.tab-content {
+  display: none;
+}
+.tab-content.active {
+  display: block;
+}
+.pid-input-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+  width: 100%;
+}
+.pid-input-group label {
+  margin-bottom: 8px;
+  font-size: 1em;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+.pid-input-group input[type="number"] {
+  width: 120px;
+  height: 32px;
+  border-radius: 16px;
+  border: 1.5px solid #444;
+  background: #222;
+  color: #fff;
+  font-size: 1.1em;
+  text-align: center;
+  outline: none;
+  margin-bottom: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: border 0.2s;
+}
+.pid-input-group input[type="number"]:focus {
+  border: 1.5px solid #00aaff;
 } 

@@ -52,21 +52,11 @@ export function calcForces(state, inputs, t) {
     {
         const gustVec = gust.evaluate(rotorPositions[i],t,globalWind);
         let gustArr;
-        if (i==0 || i==1)
-        {
-            gustArr = [
-                gustVec[0] + globalWind[0],
-                gustVec[1] + globalWind[1],
-                gustVec[2] + globalWind[2]
-            ];
-        }
-        else {
-            gustArr = [
-                0*gustVec[0] + globalWind[0],
-                0*gustVec[1] + globalWind[1],
-                0*gustVec[2] + globalWind[2]
-            ];
-        }
+        gustArr = [
+            gustVec[0] + globalWind[0],
+            gustVec[1] + globalWind[1],
+            gustVec[2] + globalWind[2]
+        ];
 
         rotorGusts.push(gustArr);
     }
@@ -88,7 +78,7 @@ export function calcForces(state, inputs, t) {
 
     let f = [];
 
-    for (let i=0;i<5;i++)
+    for (let i=0;i<4;i++)
     {
         const gustVec = rotorGusts[i];
         const f_x = gustVec[0] !== 0 ? (gustVec[0]/Math.abs(gustVec[0])) * Cd*rho*Aside*gustVec[0]**2 : 0;
@@ -97,6 +87,13 @@ export function calcForces(state, inputs, t) {
         
         f.push([f_x,f_y,f_z]);
     }
+    // estimate body CS as a rectangle with width 7.5cm * height 5cm
+    const Abody = .075 * .05;
+    const gustVec = rotorGusts[4];
+    const f_x = gustVec[0] !== 0 ? (gustVec[0]/Math.abs(gustVec[0])) * Cd*rho*Abody*gustVec[0]**2 : 0;
+    const f_y = gustVec[1] !== 0 ? (gustVec[1]/Math.abs(gustVec[1])) * Cd*rho*Abody*gustVec[1]**2 : 0;
+    const f_z = gustVec[2] !== 0 ? (gustVec[2]/Math.abs(gustVec[2])) * Cd*rho*Abody*gustVec[2]**2 : 0;
+    f.push([f_x,f_y,f_z]);
 
     // console.log("Forces before: ", f);
     return f;

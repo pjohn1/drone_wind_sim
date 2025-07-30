@@ -46,11 +46,11 @@ export function getCompMatrix(state, inputs, dt) {
   forces[3] -= P_pitch / 4;
 
   // yaw control
-//   const P_yaw = inputs.kp * error[1];
-//   forces[0] += P_yaw / 4;
-//   forces[1] -= P_yaw / 4;
-//   forces[2] += P_yaw / 4;
-//   forces[3] -= P_yaw / 4;
+  const P_yaw = inputs.kp * -error[1];
+  forces[0] -= P_yaw / 4;
+  forces[1] += P_yaw / 4;
+  forces[2] -= P_yaw / 4;
+  forces[3] += P_yaw / 4;
 
   // roll control
   const P_roll = inputs.kp * -error[0];
