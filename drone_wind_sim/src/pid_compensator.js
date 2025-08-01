@@ -24,40 +24,50 @@ function wrapToPi(angle) {
 }
 
 
-export function getCompMatrix(state, inputs, dt) {
+export function getCompMatrix(state, inputs, last_state, dt) {
   // Unpack state
-  const { roll, pitch, yaw, wx, wy, wz } = state;
+  const { x, y, z, vx, vy, vz, roll, pitch, yaw, wx, wy, wz } = state;
   const { kp, ki, kd} = inputs;
-  const e = [state.roll,state.yaw,state.pitch,state.wx,state.wy,state.wz];
-  console.log('e before: ', e);
-  const error = e.map(ang =>
+  console.log("kd: ",inputs.kd);
+  console.log("dt: ",dt);
+  let e = [state.x,state.y,state.z,state.vx,state.vy,state.vz,state.roll,state.pitch,state.yaw,state.wx,state.wy,state.wz];
+  e = e.map(ang =>
     {
       return wrapToPi(ang);
     } );
+  let last_e = [last_state.x,last_state.y,last_state.z,last_state.vx,last_state.vy,last_state.vz,last_state.roll,last_state.pitch,last_state.yaw,last_state.wx,last_state.wy,last_state.wz];
+  last_e = last_e.map(ang =>
+    {
+      return wrapToPi(ang);
+    } );
+
+  let derror = [];
+  for (let i=0;i<e.length;i++)
+  {
+    derror.push(e[i] - last_e[i]);
+  }
+  console.log("derror: ",derror);
+  // console.log('e before: ', e);
   
-  console.log('e after: ',error);
+  // console.log('e after: ',error);
 
   const forces = [0.0,0.0,0.0,0.0]
   // pitch control
-  const P_pitch = inputs.kp * -error[2];
-  forces[0] += P_pitch / 4;
-  forces[1] += P_pitch / 4;
-  forces[2] -= P_pitch / 4;
-  forces[3] -= P_pitch / 4;
-
-  // yaw control
-  const P_yaw = inputs.kp * -error[1];
-  forces[0] -= P_yaw / 4;
-  forces[1] += P_yaw / 4;
-  forces[2] -= P_yaw / 4;
-  forces[3] += P_yaw / 4;
+  const P_pitch = inputs.kp * -state.pitch; // just looking for pitch control
+  const D_pitch = dt !== 0 ? inputs.kd * -derror[7] / dt : 0;
+  console.log("D_pitch: ",D_pitch);
+  forces[0] += (P_pitch + D_pitch) / 4;
+  forces[1] += (P_pitch + D_pitch) / 4;
+  forces[2] -= (P_pitch + D_pitch) / 4;
+  forces[3] -= (P_pitch + D_pitch) / 4;
 
   // roll control
-  const P_roll = inputs.kp * -error[0];
-  forces[0] += P_roll / 4;
-  forces[1] -= P_roll / 4;
-  forces[2] -= P_roll / 4;
-  forces[3] += P_roll / 4;
+  const P_roll = inputs.kp * -state.roll;
+  const D_roll = dt !== 0 ? inputs.kd * -derror[6] / dt : 0;
+  forces[0] += (P_roll + D_roll) / 4;
+  forces[1] -= (P_roll + D_roll) / 4;
+  forces[2] -= (P_roll + D_roll) / 4;
+  forces[3] += (P_roll + D_roll) / 4;
 
   // console.log("PID forces: ", forces);
 

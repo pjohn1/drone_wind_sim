@@ -53,7 +53,7 @@ export function simulateDronePhysics(state, inputs, dt) {
       
       // Calculate torque: τ = r × F
       netTx += ry * fz - rz * fy;
-      netTy += rz * fx - rx * fz;
+      netTy += 0;//rz * fx - rx * fz;
       netTz += rx * fy - ry * fx;
     }
   }
@@ -61,14 +61,14 @@ export function simulateDronePhysics(state, inputs, dt) {
 
 
   // Linear acceleration (F = ma) in inertial frame
-  const ax = netFx / mass;
-  const ay = netFy / mass; //- gravity;
-  const az = netFz / mass;
+  const ax = 0;//netFx / mass;
+  const ay = 0;//netFy / mass; //- gravity;
+  const az = 0;//netFz / mass;
 
   // console.log("Torques: ",netTx,netTy,netTz);
   // Angular acceleration (τ = Iα)
   const alphaX = netTx / Ixx;
-  const alphaY = netTy / Iyy;
+  // const alphaY = netTy / Iyy;
   const alphaZ = netTz / Izz;
 
   // Integrate velocities
@@ -78,7 +78,7 @@ export function simulateDronePhysics(state, inputs, dt) {
 
   // Integrate angular velocities
   const dwx = alphaX * dt;
-  const dwy = alphaY * dt;
+  const dwy = 0;//alphaY * dt;
   const dwz = alphaZ * dt;
 
   return {

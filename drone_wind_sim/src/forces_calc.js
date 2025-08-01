@@ -32,9 +32,9 @@ const Aside = Math.PI*rotor_radius*rotor_height;
 export function calcForces(state, inputs, t) {
     // console.log(t);
     const { x, y, z, vx, vy, vz, roll, pitch, yaw, wx, wy, wz } = state;
-    const { windX, windY, windZ } = inputs;
+    const { windX, windY, windZ, gustAmp } = inputs;
 
-    const gust = new GustField();
+    const gust = new GustField(gustAmp);
     const globalWind = [inputs.windX, inputs.windY, inputs.windZ];
 
     const d_vert = d/(2**(1/2));
@@ -81,6 +81,7 @@ export function calcForces(state, inputs, t) {
     for (let i=0;i<4;i++)
     {
         const gustVec = rotorGusts[i];
+        // console.log("gustVec: ",gustVec);
         const f_x = gustVec[0] !== 0 ? (gustVec[0]/Math.abs(gustVec[0])) * Cd*rho*Aside*gustVec[0]**2 : 0;
         const f_y = gustVec[1] !== 0 ? (gustVec[1]/Math.abs(gustVec[1])) * Cd*rho*Ay*gustVec[1]**2 : 0;
         const f_z = gustVec[2] !== 0 ? (gustVec[2]/Math.abs(gustVec[2])) * Cd*rho*Aside*gustVec[2]**2 : 0;

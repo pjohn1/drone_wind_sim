@@ -1,5 +1,5 @@
 class GustField {
-    constructor(numWaves = 5, seed = 42) {
+    constructor(gustAmp, numWaves = 5, seed = 42) {
       this.numWaves = numWaves;
       this.freqs = [];
       this.amps = [];
@@ -10,9 +10,9 @@ class GustField {
       for (let i = 0; i < numWaves; i++) {
         this.freqs.push(this.randomRange(0.1, 1.0));
         this.amps.push([
-          this.randomRange(0.2, 0.5),
-          this.randomRange(0.2, 0.5),
-          this.randomRange(0.2, 0.5),
+          this.normalRandom(gustAmp, gustAmp * 0.3),
+          this.normalRandom(gustAmp, gustAmp * 0.3),
+          this.normalRandom(gustAmp, gustAmp * 0.3),
         ]);
         this.ks.push([
           this.randomRange(-5.0, 5.0),
@@ -47,6 +47,14 @@ class GustField {
   
     randomRange(min, max) {
       return min + (max - min) * this.random();
+    }
+
+    // Generate normally distributed random numbers using Box-Muller transform
+    normalRandom(mean, stdDev) {
+      let u1 = this.random();
+      let u2 = this.random();
+      let z0 = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
+      return mean + stdDev * z0;
     }
   }
   

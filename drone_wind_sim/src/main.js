@@ -108,6 +108,7 @@ let isPlaying = false;
 
 // Wind vector (constant for now)
 const wind = { x: 0.1, y: 0.1, z: 0.1 };
+let gustAmp = 0.5; // Default gust amplitude
 const mass = 1;
 
 // Axis indicator setup (now at the origin in the main scene)
@@ -233,6 +234,8 @@ for (let i = 0; i < numStripes; i++) {
   scene.add(mesh);
 }
 
+let lastDroneState = { ...droneState };
+
 // Animation loop
 function animate(time) {
   requestAnimationFrame(animate);
@@ -246,7 +249,8 @@ function animate(time) {
     const inputs = {
       windX: wind.x,
       windY: wind.y,
-      windZ: wind.z
+      windZ: wind.z,
+      gustAmp: gustAmp
     };
 
     // Get force matrix from calcForces
@@ -260,7 +264,8 @@ function animate(time) {
     // ];
     // console.log("Force Matrix Before: ", JSON.parse(JSON.stringify(forceMatrix))); // Deep copy for logging
     
-    let compensatorMatrix = getCompMatrix(droneState, kvals, dt);
+    let compensatorMatrix = getCompMatrix(droneState, kvals, lastDroneState, dt);
+    lastDroneState = { ...droneState };
     // compensatorMatrix = [0,0,0,0];
     // console.log("Compensator Matrix: ", compensatorMatrix);
     const R = getR(droneState.roll,droneState.pitch,droneState.yaw);
@@ -361,38 +366,23 @@ windPanel.innerHTML = `
   <h2>Wind Control</h2>
   <div class="wind-input-group">
     <label for="wind-x-num">Wind X</label>
-    <input type="number" id="wind-x-num" min="-10" max="10" step="0.1" value="0.1">
+    <input type="number" id="wind-x-num" min="-10" max="10" step="0.1" value="1">
   </div>
   <div class="wind-input-group">
     <label for="wind-y-num">Wind Y</label>
-    <input type="number" id="wind-y-num" min="-10" max="10" step="0.1" value="0.1">
+    <input type="number" id="wind-y-num" min="-10" max="10" step="0.1" value="1">
   </div>
   <div class="wind-input-group">
     <label for="wind-z-num">Wind Z</label>
-    <input type="number" id="wind-z-num" min="-10" max="10" step="0.1" value="0.1">
+    <input type="number" id="wind-z-num" min="-10" max="10" step="0.1" value="1">
+  </div>
+  <div class="wind-input-group">
+    <label for="gust-amp-num">Gust Amplitude</label>
+    <input type="number" id="gust-amp-num" min="0" max="500" step="0.1" value="10">
   </div>
 `;
 document.body.appendChild(windPanel);
-// Restore panel open/close logic
-let windPanelOpen = false;
-function openWindPanel() {
-  windPanel.classList.add('open');
-  windPanelOpen = true;
-}
-function closeWindPanel() {
-  windPanel.classList.remove('open');
-  windPanelOpen = false;
-}
-// Open when mouse is near left edge
-window.addEventListener('mousemove', (e) => {
-  if (!windPanelOpen && e.clientX < 30) openWindPanel();
-  // Close if mouse moves away from left edge and not over the panel
-  if (windPanelOpen && e.clientX > 230 && !windPanel.matches(':hover')) closeWindPanel();
-});
-// Close when mouse leaves the panel
-windPanel.addEventListener('mouseleave', () => {
-  closeWindPanel();
-});
+
 
 // Wind input logic
 function bindWindInput(axis) {
@@ -403,7 +393,14 @@ function bindWindInput(axis) {
 }
 bindWindInput('x');
 bindWindInput('y');
-bindWindInput('z'); 
+bindWindInput('z');
+
+// Gust amplitude input logic
+const gustAmpInput = document.getElementById('gust-amp-num');
+gustAmpInput.addEventListener('input', () => {
+  gustAmp = parseFloat(gustAmpInput.value);
+  console.log("Gust amplitude: ", gustAmp);
+}); 
 
 // PID gains
 let kp = 1.0, ki = 0.1, kd = 0.5;
@@ -440,26 +437,7 @@ controlPanel.innerHTML = `
 `;
 document.body.appendChild(controlPanel);
 
-// Control panel open/close logic
-let controlPanelOpen = false;
-function openControlPanel() {
-  controlPanel.classList.add('open');
-  controlPanelOpen = true;
-}
-function closeControlPanel() {
-  controlPanel.classList.remove('open');
-  controlPanelOpen = false;
-}
-// Open when mouse is near right edge
-window.addEventListener('mousemove', (e) => {
-  if (!controlPanelOpen && e.clientX > window.innerWidth - 30) openControlPanel();
-  // Close if mouse moves away from right edge and not over the panel
-  if (controlPanelOpen && e.clientX < window.innerWidth - 320 && !controlPanel.matches(':hover')) closeControlPanel();
-});
-// Close when mouse leaves the panel
-controlPanel.addEventListener('mouseleave', () => {
-  closeControlPanel();
-});
+
 
 // Tab switching logic
 const tabButtons = controlPanel.querySelectorAll('.tab-button');
