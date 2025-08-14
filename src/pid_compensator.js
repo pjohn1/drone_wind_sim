@@ -53,13 +53,13 @@ export function getCompMatrix(state, inputs, last_state, dt) {
 
   const forces = [0.0,0.0,0.0,0.0]
   // pitch control
-  const P_pitch = inputs.kp * -state.pitch; // just looking for pitch control
-  const D_pitch = dt !== 0 ? inputs.kd * -derror[7] / dt : 0;
+  const P_pitch = inputs.kp * state.pitch; // just looking for pitch control
+  const D_pitch = dt !== 0 ? inputs.kd * derror[7] / dt : 0;
   console.log("D_pitch: ",D_pitch);
-  forces[0] += (P_pitch + D_pitch) / 4;
-  forces[1] += (P_pitch + D_pitch) / 4;
-  forces[2] -= (P_pitch + D_pitch) / 4;
-  forces[3] -= (P_pitch + D_pitch) / 4;
+  forces[0] -= (P_pitch + D_pitch) / 4;
+  forces[1] -= (P_pitch + D_pitch) / 4;
+  forces[2] += (P_pitch + D_pitch) / 4;
+  forces[3] += (P_pitch + D_pitch) / 4;
 
   // roll control
   const P_roll = inputs.kp * -state.roll;
