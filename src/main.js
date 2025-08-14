@@ -44,7 +44,7 @@ scene.add(platform);
 // Load Collada drone model
 let drone = null;
 const loader = new ColladaLoader();
-loader.load('src/hummingbird.dae', (collada) => {
+loader.load('./hummingbird.dae', (collada) => {
   drone = collada.scene;
   drone.traverse(child => {
     if (child.isMesh) {
